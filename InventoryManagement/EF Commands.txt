@@ -1,0 +1,140 @@
+﻿Package Manager Console Commands for Migrations	see https://www.entityframeworktutorial.net/efcore/pmc-commands-for-ef-core-migration.aspx
+Visual Studio Menu: Tools -> NuGet Package Manager -> Package Manager Console
+
+Command Line Interface (CLI) Commands for Migrations see https://www.entityframeworktutorial.net/efcore/cli-commands-for-ef-core-migration.aspx
+Right-click on solution or project and select Open In Terminal from the context menu
+
+Create Datbase
+
+    1. Add a new migration
+	
+	    a. Initial/Create command with '-o' switch to direct migration file output to 'Data\Migrations':
+
+		    dotnet ef migrations add [Name of new Migration e.g. 'CreateDatabase'] -o Data\Migrations -v
+
+		    -o directs migration output to specified path (e.g. 'Data\Migrations'); Paths are relative to the project directory
+		    -v displays verbose output during execution of the command
+
+		    dotnet ef migrations add CreateDatabase -o Data\Migrations -v
+
+    2. Update the Database
+	
+	    a.Updates the database with the lastet migration or to a specified migration
+
+		    dotnet ef database update
+
+
+Updating a model:
+
+    Run the following commands* after modifying a class model (e.g. Status to Product).
+
+    New migrations are created as siblings of the last migration
+
+	    1. dotnet ef migrations add [Name of migration]
+
+	       dotnet ef migrations add ProductUpcUniqueToChar12RequiredProductName
+
+	       The datet and time will be added to the migration name (e.g. 20220901191221_MigrationName)
+
+	       After executing this command the default values can be added before actually 
+	       updating the database with the next step (2. dotnet ef database update). 
+	       See InventoryManagement\Data\Migrations for the newly created migration file
+
+
+	    2. dotnet ef database update
+
+Adding Stored Procedures:
+
+    See https://dotnetthoughts.net/creating-stored-procs-in-efcore-migrations/ for including script files. You need to add the SQL scripts as embedded resources
+    and update the Up method as follows:
+
+    protected override void Up(MigrationBuilder migrationBuilder)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var sqlFiles = assembly.GetManifestResourceNames().
+                    Where(file => file.EndsWith(".sql"));
+        foreach (var sqlFile in sqlFiles)
+        {
+            using (Stream stream = assembly.GetManifestResourceStream(sqlFile))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                var sqlScript = reader.ReadToEnd();
+                migrationBuilder.Sql($"EXEC(N'{sqlScript}')");
+            }
+        }
+    }
+
+    This is just like any other change to the model which involves creating a new migration. Any pending changes will be captured so it's best
+    to add a migration for those changes first and then update the database. After which create a new migration which will leave a blank migration for
+    adding the stored procedure(s).
+
+    1. Add a new migration
+
+	    dotnet ef migrations add [Name of migration e.g. GetAllTodoItemsByStatusProc or VariousStoredProcs]
+
+	    dotnet ef migrations add ReplaceThisWithNameOfMigration
+
+    2. A new, empty migration will be created similar to the following:
+
+    public partial class [NameOfMigration] : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+
+        }
+    }
+
+    3. Modify the Up and Down methods similar to the following:
+
+    public partial class [NameOfMigration] : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            var createProcSql = @"EXEC('CREATE OR ALTER PROC usp_GetAllTodoItemsByStatus(@isCompleted BIT) AS SELECT * FROM TodoItems WHERE IsCompleted = @isCompleted')";
+            migrationBuilder.Sql(createProcSql);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            var dropProcSql = "DROP PROC usp_GetAllTodoItemsByStatus";
+            migrationBuilder.Sql(dropProcSql);
+        }
+    }
+
+    4.	Update the database:
+
+	    dotnet ef database update
+
+Roll back applied migration
+
+    Example:
+
+        Migration_1
+        Migration_2
+        Migration_3 <- Keep all migrations up to and including this one
+        Migration_4
+        Migration_5
+
+        First update the database with the last migration to be kept (Migration_3) with
+
+        'dotnet ef database update Migration_3'
+
+        Then remove each remaining mirgration one at a time with 
+        
+        'dotnet ef migrations remove'
+
+        In this example the above would be run twice, once to remove Migration_4
+        and once to remove Migration_5
+
+    1. Update the database with the migration you want to keep
+
+        dotnet ef database update NameOfPenultimateMigration
+
+    2. Remove last migration 
+
+        dotnet ef migrations remove

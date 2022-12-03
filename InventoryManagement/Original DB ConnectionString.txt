@@ -1,0 +1,3 @@
+    //"Default": "Server=ThomasHudson;Database=InventoryManagement;Trusted_Connection=True;MultipleActiveResultSets=true"
+    //"Default": "Data Source=ThomasHudson;Initial Catalog=InventoryManagement;Persist Security Info=True;User ID=BarInvAPI;TrustServerCertificate=True;Authentication='Sql Password'",
+    //"Default": "Server=ThomasHudson;Database=InventoryManagement;User Id=BarInvAPI;Password=albion;",

@@ -1,0 +1,36 @@
+Beer On Tap
+Bitters / Syrups
+Bottled Beer
+Brandy/Cognac/Armagnac/Pisco/Absinthe/Aquavit
+Cooking Wine
+Gin
+Grappa / Sambucca / Eau-de-Vie
+Liquers
+Non-Alcoholic Beverages
+Red Wine
+Rum / Cachaca
+Sparkling/ Rose/Dessert/Fortified
+Tequila / Mezcal
+Vermouth
+Vodka
+Whiskey / Bourbon / Scotch / Irish
+White Wine
+
+
+new Group { Name = "Beer On Tap" },
+new Group { Name = "Bitters / Syrups" },
+new Group { Name = "Bottled Beer" },
+new Group { Name = "Brandy/Cognac/Armagnac/Pisco/Absinthe/Aquavit" },
+new Group { Name = "Cooking Wine" },
+new Group { Name = "Gin" },
+new Group { Name = "Grappa / Sambucca / Eau-de-Vie" },
+new Group { Name = "Liquers" },
+new Group { Name = "Non-Alcoholic Beverages" },
+new Group { Name = "Red Wine" },
+new Group { Name = "Rum / Cachaca" },
+new Group { Name = "Sparkling/ Rose/Dessert/Fortified" },
+new Group { Name = "Tequila / Mezcal" },
+new Group { Name = "Vermouth" },
+new Group { Name = "Vodka" },
+new Group { Name = "Whiskey / Bourbon / Scotch / Irish" },
+new Group { Name = "White Wine" }
